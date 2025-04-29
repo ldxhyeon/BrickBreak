@@ -42,18 +42,13 @@ for(let i = 0; i < 4; i++) {
           ctx.strokeRect(blockStartX * (j + 1), blockStartY * (i + 1), bricksWidth, bricksHeight);
         }else {
           ctx.fillStyle = "#E6E6E6";
-          ctx.fillRect(blockStartX * (j + 1), blockStartY * (i + 1) - 20, bricksWidth, bricksHeight); 
+          ctx.fillRect(blockStartX * (j + 1), blockStartY * (i + 1) - (20 * i), bricksWidth, bricksHeight); 
           ctx.strokeStyle = "#333";
-          ctx.strokeRect(blockStartX * (j + 1), blockStartY * (i + 1) - 20, bricksWidth, bricksHeight);
+          ctx.strokeRect(blockStartX * (j + 1), blockStartY * (i + 1) - (20 * i), bricksWidth, bricksHeight);
         }
       }
     }
   }
 
+  
 
-
-
-// 40 + 20 == 60
-// 40 * 2 == 80
-// 40 * 3 == 120
-// 40 * 4 == 160
