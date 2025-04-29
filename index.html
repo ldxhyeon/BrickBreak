@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>테트리스</title>
+
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      margin: 30px;
+    }
+
+    canvas {
+      background: #fff;
+      border: 1px solid #333;
+    }
+
+    .move-btn {
+      width: 50px;
+      height: 50px;
+      font-size: 16px;
+      border: 1px solid #333;
+      background: #fff;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="tetris" width="390" height="600">
+
+  </canvas>
+
+  <div style="border:1px solid #333; width:390px; margin-top: 10px;">
+    <div style="padding: 10px;">
+      <button class="move-btn" id="moveLeft">좌</button>
+      <button class="move-btn" id="moveRight">우</button>
+      <button class="move-btn" id="moveRotate">회전</button>
+      <button class="move-btn" id="moveDrop">하강</button>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+
+  
+</body>
+
+</html>
