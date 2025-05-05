@@ -4,16 +4,13 @@ const ctx = canvas.getContext("2d");
 /* 캔버스 x 좌표 가운데 */
 let canvasWidth = canvas.width / 2;
 
-/* 패들 좌표 및 사이즈 */
-const paddleX = canvasWidth;
-const paddleY = 420;
+/* 패들 좌표 */
+let paddleX = canvasWidth;
+let paddleY = 420;
 
+/* 패들 사이즈 */
 const paddleWidth = 85;
 const paddleHeight = 15;
-
-/* 좌표 */
-let x = 0;
-let y = 0;
 
 /* 볼 좌표 */
 let ballX = canvasWidth; // 300
@@ -46,12 +43,48 @@ function paddleDraw() {
   ctx.fillRect(paddleX - (paddleWidth / 2), paddleY, paddleWidth, paddleHeight);
 }
 
+function ballCollsion() {
+  // 현재 오류
+  // 너비보다 작으면 +를 하고
+  // 너비랑 같아지면 -를 한다
+  // 마이너스가 되면 계속 플러스가 되고 무한 반복
 
-// function checkCollison() {
-// }
+  // 520이 되면 멈춤
+  // 518이되면 다시 +2 무한 루프
 
-let dx = 2;
-let dy = -2;
+  // 볼 좌표 + 1이 캔버스 우측벽 - 지름 보다 크면 -로 변경
+  // 볼 좌표 + 1이 캔버스 좌측벽 지름 보다 작으면 -로 변경
+
+  // 볼좌표가 캔바스 우측 590보다 크면 안도ㅟ고
+  // 10보다 작으면 안됨
+
+  // 크면 마이너스
+  // 10보다 작으면 +
+  if (ballX + bx > canvas.width - 10 || ballX + bx < 10) {
+    bx = -bx;
+  }
+  // 볼 x이동
+  ballX += bx;
+
+  if (ballY + by > canvas.height - 10 || ballY + by < 10) {
+    by = -by;
+  }
+  // 볼 y 이동
+  ballY += by;
+}
+
+let bx = 2; // 충돌 x 좌표
+let by = -2;  // 충돌 y 좌표
+
+/* 방향키 눌림 감지 */
+document.addEventListener('keydown', (e) => {
+  if (e.key == "ArrowRight") {
+    paddleX += 5;
+  }
+  if (e.key == "ArrowLeft") {
+    paddleX -= 5;
+  }
+});
 
 
 /* 그리기 */
@@ -63,18 +96,8 @@ function draw() {
   paddleDraw();
   // 볼 그리기
   ballDraw();
-
-  // 현재 오류
-  // 너비보다 작으면 +를 하고
-  // 너비랑 같아지면 -를 한다
-  // 마이너스가 되면 계속 플러스가 되고 무한 반복
-
-  // 520이 되면 멈춤
-  // 518이되면 다시 +2 무한 루프
-
-  // 볼 좌표가 캔바스 너비보다 작으면
-  // 충돌감지부터 시작!!!!!!!!!!!!!!!!!!!!!!!!
-
+  // 충돌 감지
+  ballCollsion();
 
   /* 벽돌 그리기 */
   for(let i = 0; i < 4; i++) {
@@ -100,3 +123,19 @@ function draw() {
 }
 
 draw();
+
+/* 방향키 이벤트 */
+document.addEventListener('keydown', (e) => {
+  switch(e.key) {
+    case "ArrowLeft":
+      paddleX -= 10;  // ← 왼쪽으로 이동
+      break;
+    case "ArrowRight":
+      paddleX += 10;  // → 오른쪽으로 이동
+      break;
+  }
+});
+
+
+
+
