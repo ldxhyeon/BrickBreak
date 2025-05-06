@@ -9,7 +9,7 @@ let paddleX = canvasWidth;
 let paddleY = 420;
 
 /* 패들 사이즈 */
-const paddleWidth = 85;
+const paddleWidth = 90;
 const paddleHeight = 15;
 
 /* 볼 좌표 */
@@ -52,8 +52,8 @@ function ballCollsion() {
   // 520이 되면 멈춤
   // 518이되면 다시 +2 무한 루프
 
-  // 볼 좌표 + 1이 캔버스 우측벽 - 지름 보다 크면 -로 변경
-  // 볼 좌표 + 1이 캔버스 좌측벽 지름 보다 작으면 -로 변경
+  // 볼 좌표 + 2이 캔버스 우측벽 - 지름 보다 크면 -로 변경
+  // 볼 좌표 + 2이 캔버스 좌측벽 지름 보다 작으면 -로 변경
 
   // 볼좌표가 캔바스 우측 590보다 크면 안도ㅟ고
   // 10보다 작으면 안됨
@@ -63,12 +63,14 @@ function ballCollsion() {
   if (ballX + bx > canvas.width - 10 || ballX + bx < 10) {
     bx = -bx;
   }
+
   // 볼 x이동
   ballX += bx;
 
   if (ballY + by > canvas.height - 10 || ballY + by < 10) {
     by = -by;
   }
+
   // 볼 y 이동
   ballY += by;
 }
@@ -76,15 +78,51 @@ function ballCollsion() {
 let bx = 2; // 충돌 x 좌표
 let by = -2;  // 충돌 y 좌표
 
-/* 방향키 눌림 감지 */
+
+let keyResult = 0;
+
+/* 방향키 이동 */
 document.addEventListener('keydown', (e) => {
-  if (e.key == "ArrowRight") {
-    paddleX += 5;
+  if (e.key === "ArrowRight") {
+    keyResult = 1;
+    // if(paddleX < canvas.width - (paddleWidth / 2)) {
+    //   paddleX += 5;
+    // }
   }
-  if (e.key == "ArrowLeft") {
-    paddleX -= 5;
+  if (e.key === "ArrowLeft") {
+    keyResult = 2;
+    // if(paddleX > 0 + (paddleWidth / 2)) {
+    //   paddleX -= 5;
+    // }
   }
 });
+
+document.addEventListener('keyup', (e) => {
+  if (e.key === "ArrowRight") {
+    if(keyResult == 1) {
+      keyResult = 0;
+    }
+  }
+  if (e.key === "ArrowLeft") {
+    if(keyResult == 2) {
+      keyResult = 0;
+    }
+  }
+});
+
+// 패들 충돌
+function paddleCollison() {
+  if (keyResult == 1) {
+    if (paddleX < canvas.width - (paddleWidth / 2)) { // 패들 x 좌표가 캔바스 벽 - 45 보다 작으면 +
+      paddleX += 5;
+    }
+  }
+  if (keyResult == 2) {
+    if (paddleX > paddleWidth / 2) { // 패들 x 좌표가 좌측벽 45보다 크면 -
+      paddleX -= 5;
+    }
+  }
+}
 
 
 /* 그리기 */
@@ -92,7 +130,9 @@ function draw() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height); // 캔버스판 초기화
 
-  // 패들 그리기 함수
+  // 패들 충돌검사
+  paddleCollison();
+  // 패들 함수
   paddleDraw();
   // 볼 그리기
   ballDraw();
@@ -123,18 +163,6 @@ function draw() {
 }
 
 draw();
-
-/* 방향키 이벤트 */
-document.addEventListener('keydown', (e) => {
-  switch(e.key) {
-    case "ArrowLeft":
-      paddleX -= 10;  // ← 왼쪽으로 이동
-      break;
-    case "ArrowRight":
-      paddleX += 10;  // → 오른쪽으로 이동
-      break;
-  }
-});
 
 
 
