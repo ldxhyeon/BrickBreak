@@ -43,6 +43,9 @@ function paddleDraw() {
   ctx.fillRect(paddleX - (paddleWidth / 2), paddleY, paddleWidth, paddleHeight);
 }
 
+let bx = 0; // 충돌 x 좌표
+let by = 0;  // 충돌 y 좌표
+
 function ballCollsion() {
   // 현재 오류
   // 너비보다 작으면 +를 하고
@@ -73,13 +76,19 @@ function ballCollsion() {
 
   // 볼 y 이동
   ballY += by;
+
+
+  // 패들 좌표에 닿으면 튕겨져 나가게 작성
+  // 패들은 y는 그대로이며 x가 계속 움직임
+  // 볼의 x좌표가 패들 x좌표 +-45일때 닿으면 튕겨져 나가게
+  // 볼좌표 303이 paddle(300 - 45) 크고 303이 345보다 작아야함 그리고 ballY가 패들 y좌표와 같아야 함
+  if(ballX + bx > paddleX - 45 && ballX + bx < paddleX + 45 && ballY + 10 == 420) {
+    by = -by;
+  }
 }
 
-let bx = 2; // 충돌 x 좌표
-let by = -2;  // 충돌 y 좌표
-
-
-let keyResult = 0;
+let keyResult = 0; 
+let startGame = false; // 게임 시작
 
 /* 방향키 이동 */
 document.addEventListener('keydown', (e) => {
@@ -94,6 +103,9 @@ document.addEventListener('keydown', (e) => {
     // if(paddleX > 0 + (paddleWidth / 2)) {
     //   paddleX -= 5;
     // }
+  }
+  if (e.key === " ") {
+    startGame = true;
   }
 });
 
@@ -113,17 +125,22 @@ document.addEventListener('keyup', (e) => {
 // 패들 충돌
 function paddleCollison() {
   if (keyResult == 1) {
-    if (paddleX < canvas.width - (paddleWidth / 2)) { // 패들 x 좌표가 캔바스 벽 - 45 보다 작으면 +
+    if(paddleX < canvas.width - (paddleWidth / 2)) { // 패들 x 좌표가 캔바스 벽 - 45 보다 작으면 +
       paddleX += 5;
+      if(startGame == false) {
+        ballX += 5;
+      }
     }
   }
-  if (keyResult == 2) {
-    if (paddleX > paddleWidth / 2) { // 패들 x 좌표가 좌측벽 45보다 크면 -
+  if(keyResult == 2) {
+    if(paddleX > paddleWidth / 2) { // 패들 x 좌표가 좌측벽 45보다 크면 -
       paddleX -= 5;
+      if(startGame == false) {
+        ballX -= 5;
+      }
     }
   }
 }
-
 
 /* 그리기 */
 function draw() {
@@ -132,12 +149,23 @@ function draw() {
 
   // 패들 충돌검사
   paddleCollison();
-  // 패들 함수
+  // 패들 그리기
   paddleDraw();
+  // 충돌 감지 , 스페이스 바 누르면 시작
+  // 충돌체크 게임시작이 패들위치를 먼저 확인한 후 실행
+  if(!startGame) {
+    if(paddleX > 300) {
+      bx = -3;
+      by = -2;
+    }else {
+      bx = 3;
+      by = -2;
+    }
+  }else {
+    ballCollsion(); 
+  }
   // 볼 그리기
   ballDraw();
-  // 충돌 감지
-  ballCollsion();
 
   /* 벽돌 그리기 */
   for(let i = 0; i < 4; i++) {
@@ -162,7 +190,7 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
-draw();
+draw(); 
 
 
 
