@@ -88,6 +88,16 @@ function ballCollsion() {
   // 볼좌표 303이 paddle(300 - 45) 크고 303이 345보다 작아야함 그리고 ballY가 패들 y좌표와 같아야 함
   if(ballX + bx > paddleX - 45 && ballX + bx < paddleX + 45 && ballY + 10 == 420) {
     by = -by;
+    // 볼이 패들 좌측에 닿으면 x좌표는 -
+    // 볼이 패들 우측에 닿으면 x좌표는 +
+    // 볼 좌표 303이 패들 255보다 작고 303이 패들 300보다 크면
+    // 볼이 --여서 양수로 바뀜 안바뀌게
+    if(ballX + bx < paddleX) {
+      bx = -Math.abs(bx); 
+    }else {
+      bx = Math.abs(bx);
+    }
+
   }
 
   /* 패들 보다 낮으면 게임 끝 */
