@@ -103,30 +103,30 @@ let keyResult = 0;
 
 /* 방향키 이동 */
 document.addEventListener('keydown', (e) => {
-  if (e.key === "ArrowRight") {
+  if (e.key == "ArrowRight") {
     keyResult = 1;
     // if(paddleX < canvas.width - (paddleWidth / 2)) {
     //   paddleX += 5;
     // }
   }
-  if (e.key === "ArrowLeft") {
+  if (e.key == "ArrowLeft") {
     keyResult = 2;
     // if(paddleX > 0 + (paddleWidth / 2)) {
     //   paddleX -= 5;
     // }
   }
-  if (e.key === " ") {
+  if (e.key == " ") {
     startGame = true;
   }
 });
 
 document.addEventListener('keyup', (e) => {
-  if (e.key === "ArrowRight") {
+  if (e.key == "ArrowRight") {
     if(keyResult == 1) {
       keyResult = 0;
     }
   }
-  if (e.key === "ArrowLeft") {
+  if (e.key == "ArrowLeft") {
     if(keyResult == 2) {
       keyResult = 0;
     }
@@ -156,12 +156,19 @@ function paddleCollison() {
 /* 그리기 */
 function draw() {
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // 캔버스판 초기화
+  ctx.clearRect(0, 0, canvas.width, canvas.height); 
+
+  // 공이 패들에 부딪히지 않으면 true
+  // 알림창
+  // 함수 벗어남
+
+  // 내가 원하는것 알림 확인을 누르면 다시 초기로돌아가 다시 시작
 
   // 패들 충돌검사
   paddleCollison();
   // 패들 그리기
   paddleDraw();
+  
   // 충돌 감지 , 스페이스 바 누르면 시작
   // 충돌체크 게임시작이 패들위치를 먼저 확인한 후 실행
   if(!startGame) {
@@ -181,12 +188,10 @@ function draw() {
     ballDraw();
   }
 
-  // gameOver == 초기값 false
-  // 볼이 닿으면 true로 변경
-  // 얘는 계속 그려지는 draw
   if(gameOver) {
-    alert("끝");
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // 캔버스판 초기화
+    alert("게임 끝");
+    location.reload();
+    return;
   }
 
   /* 벽돌 그리기 */
