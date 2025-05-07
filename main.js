@@ -46,6 +46,10 @@ function paddleDraw() {
 let bx = 0; // 충돌 x 좌표
 let by = 0;  // 충돌 y 좌표
 
+let gameOver = false; // 게임 끝
+let startGame = false; // 게임 시작
+
+
 function ballCollsion() {
   // 현재 오류
   // 너비보다 작으면 +를 하고
@@ -58,7 +62,7 @@ function ballCollsion() {
   // 볼 좌표 + 2이 캔버스 우측벽 - 지름 보다 크면 -로 변경
   // 볼 좌표 + 2이 캔버스 좌측벽 지름 보다 작으면 -로 변경
 
-  // 볼좌표가 캔바스 우측 590보다 크면 안도ㅟ고
+  // 볼좌표가 캔바스 우측 590보다 크면 안됨
   // 10보다 작으면 안됨
 
   // 크면 마이너스
@@ -85,10 +89,17 @@ function ballCollsion() {
   if(ballX + bx > paddleX - 45 && ballX + bx < paddleX + 45 && ballY + 10 == 420) {
     by = -by;
   }
+
+  // 볼의 좌표가 패들 좌표보다 크면 게임 끝 설정
+  // 경고가 뜨면 더 이상 게임이 실행되지 않아야 함.
+  // 볼 좌표 + 20이 패들보다 크면 끝
+  if(ballY + 10 > paddleY + 10) { 
+    gameOver = true;
+  }
+  
 }
 
 let keyResult = 0; 
-let startGame = false; // 게임 시작
 
 /* 방향키 이동 */
 document.addEventListener('keydown', (e) => {
@@ -155,17 +166,28 @@ function draw() {
   // 충돌체크 게임시작이 패들위치를 먼저 확인한 후 실행
   if(!startGame) {
     if(paddleX > 300) {
-      bx = -3;
-      by = -2;
+      bx = -4;
+      by = -3;
     }else {
-      bx = 3;
-      by = -2;
+      bx = 4;
+      by = -3;
     }
   }else {
     ballCollsion(); 
   }
+
   // 볼 그리기
-  ballDraw();
+  if(!gameOver) {
+    ballDraw();
+  }
+
+  // gameOver == 초기값 false
+  // 볼이 닿으면 true로 변경
+  // 얘는 계속 그려지는 draw
+  if(gameOver) {
+    alert("끝");
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // 캔버스판 초기화
+  }
 
   /* 벽돌 그리기 */
   for(let i = 0; i < 4; i++) {
@@ -190,8 +212,6 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
-draw(); 
-
-
+draw();
 
 
