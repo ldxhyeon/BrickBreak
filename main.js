@@ -101,11 +101,11 @@ function ballCollsion() {
   /* 벽돌 충돌 */
   // 벽돌의 좌표를 구한다 포문 ??
   // 볼의 좌표를 구한다.
-  for(let i = 0; i < mapBricks.length; i++) {
-    for(let i = 0; i < mapBricks[i].length; j++) {
+  // for(let i = 0; i < mapBricks.length; i++) {
+  //   for(let i = 0; i < mapBricks[i].length; j++) {
       
-    }
-  }
+  //   }
+  // }
 
 }
 
