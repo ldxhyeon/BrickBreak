@@ -75,6 +75,15 @@ function draw() {
   // 볼 좌표가 캔바스 너비보다 작으면
   // 충돌감지부터 시작!!!!!!!!!!!!!!!!!!!!!!!!
 
+  if(ballX + 10 <= canvas.width) {
+    ballX++;
+  }
+  if(ballX + 10 >= 600) {
+      ballX--;
+  }
+
+
+
 
   /* 벽돌 그리기 */
   for(let i = 0; i < 4; i++) {
@@ -83,7 +92,7 @@ function draw() {
         if(i == 0) {
           ctx.fillStyle = "#E6E6E6";
           ctx.fillRect(blockStartX * (j + 1), blockStartY * (i + 1), bricksWidth, bricksHeight); 
-          ctx.strokeStyle = "#333";
+          ctx.strokeStyle = "#3s33";
           ctx.strokeRect(blockStartX * (j + 1), blockStartY * (i + 1), bricksWidth, bricksHeight);
         }else {
           ctx.fillStyle = "#E6E6E6";
