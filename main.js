@@ -90,13 +90,23 @@ function ballCollsion() {
     by = -by;
   }
 
+  /* 패들 보다 낮으면 게임 끝 */
   // 볼의 좌표가 패들 좌표보다 크면 게임 끝 설정
   // 경고가 뜨면 더 이상 게임이 실행되지 않아야 함.
   // 볼 좌표 + 20이 패들보다 크면 끝
   if(ballY + 10 > paddleY + 10) { 
     gameOver = true;
   }
-  
+
+  /* 벽돌 충돌 */
+  // 벽돌의 좌표를 구한다 포문 ??
+  // 볼의 좌표를 구한다.
+  for(let i = 0; i < mapBricks.length; i++) {
+    for(let i = 0; i < mapBricks[i].length; j++) {
+      
+    }
+  }
+
 }
 
 let keyResult = 0; 
