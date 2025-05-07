@@ -4,16 +4,13 @@ const ctx = canvas.getContext("2d");
 /* 캔버스 x 좌표 가운데 */
 let canvasWidth = canvas.width / 2;
 
-/* 패들 좌표 및 사이즈 */
-const paddleX = canvasWidth;
-const paddleY = 420;
+/* 패들 좌표 */
+let paddleX = canvasWidth;
+let paddleY = 420;
 
-const paddleWidth = 85;
+/* 패들 사이즈 */
+const paddleWidth = 90;
 const paddleHeight = 15;
-
-/* 좌표 */
-let x = 0;
-let y = 0;
 
 /* 볼 좌표 */
 let ballX = canvasWidth; // 300
@@ -46,24 +43,10 @@ function paddleDraw() {
   ctx.fillRect(paddleX - (paddleWidth / 2), paddleY, paddleWidth, paddleHeight);
 }
 
+let bx = 0; // 충돌 x 좌표
+let by = 0;  // 충돌 y 좌표
 
-// function checkCollison() {
-// }
-
-let dx = 2;
-let dy = -2;
-
-
-/* 그리기 */
-function draw() {
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // 캔버스판 초기화
-
-  // 패들 그리기 함수
-  paddleDraw();
-  // 볼 그리기
-  ballDraw();
-
+function ballCollsion() {
   // 현재 오류
   // 너비보다 작으면 +를 하고
   // 너비랑 같아지면 -를 한다
@@ -72,18 +55,117 @@ function draw() {
   // 520이 되면 멈춤
   // 518이되면 다시 +2 무한 루프
 
-  // 볼 좌표가 캔바스 너비보다 작으면
-  // 충돌감지부터 시작!!!!!!!!!!!!!!!!!!!!!!!!
+  // 볼 좌표 + 2이 캔버스 우측벽 - 지름 보다 크면 -로 변경
+  // 볼 좌표 + 2이 캔버스 좌측벽 지름 보다 작으면 -로 변경
 
-  if(ballX + 10 <= canvas.width) {
-    ballX++;
+  // 볼좌표가 캔바스 우측 590보다 크면 안도ㅟ고
+  // 10보다 작으면 안됨
+
+  // 크면 마이너스
+  // 10보다 작으면 +
+  if (ballX + bx > canvas.width - 10 || ballX + bx < 10) {
+    bx = -bx;
   }
-  if(ballX + 10 >= 600) {
-      ballX--;
+
+  // 볼 x이동
+  ballX += bx;
+
+  if (ballY + by > canvas.height - 10 || ballY + by < 10) {
+    by = -by;
   }
 
+  // 볼 y 이동
+  ballY += by;
 
 
+  // 패들 좌표에 닿으면 튕겨져 나가게 작성
+  // 패들은 y는 그대로이며 x가 계속 움직임
+  // 볼의 x좌표가 패들 x좌표 +-45일때 닿으면 튕겨져 나가게
+  // 볼좌표 303이 paddle(300 - 45) 크고 303이 345보다 작아야함 그리고 ballY가 패들 y좌표와 같아야 함
+  if(ballX + bx > paddleX - 45 && ballX + bx < paddleX + 45 && ballY + 10 == 420) {
+    by = -by;
+  }
+}
+
+let keyResult = 0; 
+let startGame = false; // 게임 시작
+
+/* 방향키 이동 */
+document.addEventListener('keydown', (e) => {
+  if (e.key === "ArrowRight") {
+    keyResult = 1;
+    // if(paddleX < canvas.width - (paddleWidth / 2)) {
+    //   paddleX += 5;
+    // }
+  }
+  if (e.key === "ArrowLeft") {
+    keyResult = 2;
+    // if(paddleX > 0 + (paddleWidth / 2)) {
+    //   paddleX -= 5;
+    // }
+  }
+  if (e.key === " ") {
+    startGame = true;
+  }
+});
+
+document.addEventListener('keyup', (e) => {
+  if (e.key === "ArrowRight") {
+    if(keyResult == 1) {
+      keyResult = 0;
+    }
+  }
+  if (e.key === "ArrowLeft") {
+    if(keyResult == 2) {
+      keyResult = 0;
+    }
+  }
+});
+
+// 패들 충돌
+function paddleCollison() {
+  if (keyResult == 1) {
+    if(paddleX < canvas.width - (paddleWidth / 2)) { // 패들 x 좌표가 캔바스 벽 - 45 보다 작으면 +
+      paddleX += 5;
+      if(startGame == false) {
+        ballX += 5;
+      }
+    }
+  }
+  if(keyResult == 2) {
+    if(paddleX > paddleWidth / 2) { // 패들 x 좌표가 좌측벽 45보다 크면 -
+      paddleX -= 5;
+      if(startGame == false) {
+        ballX -= 5;
+      }
+    }
+  }
+}
+
+/* 그리기 */
+function draw() {
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height); // 캔버스판 초기화
+
+  // 패들 충돌검사
+  paddleCollison();
+  // 패들 그리기
+  paddleDraw();
+  // 충돌 감지 , 스페이스 바 누르면 시작
+  // 충돌체크 게임시작이 패들위치를 먼저 확인한 후 실행
+  if(!startGame) {
+    if(paddleX > 300) {
+      bx = -3;
+      by = -2;
+    }else {
+      bx = 3;
+      by = -2;
+    }
+  }else {
+    ballCollsion(); 
+  }
+  // 볼 그리기
+  ballDraw();
 
   /* 벽돌 그리기 */
   for(let i = 0; i < 4; i++) {
@@ -108,4 +190,8 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
-draw();
+draw(); 
+
+
+
+
