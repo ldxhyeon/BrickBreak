@@ -46,13 +46,14 @@ function paddleDraw() {
   ctx.fillRect(paddleX - (paddleWidth / 2), paddleY, paddleWidth, paddleHeight);
 }
 
-let bx = 0; // 충돌 x 좌표
-let by = 0;  // 충돌 y 좌표
+let bx = 0; 
+let by = 0;  
 
 let gameOver = false; // 게임 끝
 let startGame = false; // 게임 시작
 
 
+let count = 0;
 
 function ballCollision() {
   // 현재 오류
@@ -85,30 +86,34 @@ function ballCollision() {
   // 볼 y 이동
   ballY += by;
 
-
   // 패들 좌표에 닿으면 튕겨져 나가게 작성
   // 패들은 y는 그대로이며 x가 계속 움직임
   // 볼의 x좌표가 패들 x좌표 +-45일때 닿으면 튕겨져 나가게
-  // 볼좌표 303이 paddle(300 - 45) 크고 303이 345보다 작아야함 그리고 ballY가 패들 y좌표와 같아야 함
-  if(ballX + bx > paddleX - 45 && ballX + bx < paddleX + 45 && ballY + 10 == 420) {
-    by = -by;
-    // 볼이 패들 좌측에 닿으면 x좌표는 -
-    // 볼이 패들 우측에 닿으면 x좌표는 +
-    // 볼 좌표 303이 패들 255보다 작고 303이 패들 300보다 크면
-    // 볼이 --여서 양수로 바뀜 안바뀌게
-    if(ballX + bx < paddleX) {
-      bx = -Math.abs(bx);
-    }else {
-      bx = Math.abs(bx);
-    }
+  // 볼X좌표 + 반지름이 패들X - 45 보다 크고 패들좌표 + 45보다 작야아함
+  // 볼Y좌표(420) + paddleY보다 커야함
+  if(ballX + ballRadius > paddleX - paddleWidth / 2 && ballX + ballRadius < paddleX + paddleWidth / 2 &&
+     ballY + ballRadius > paddleY) {
+      by = -by;
+
+  
+
+      // 볼이 패들 좌측에 닿으면 x좌표는 -
+      // 볼이 패들 우측에 닿으면 x좌표는 +
+      // 볼 좌표가 300보다 작으면 -
+      // 볼이 --여서 양수로 바뀜 안바뀌게
+      if(ballX + ballRadius < paddleX) {
+        bx = -Math.abs(bx);
+      }else {
+        bx = Math.abs(bx);
+      }
 
   }
 
   /* 패들 보다 낮으면 게임 끝 */
   // 볼의 좌표가 패들 좌표보다 크면 게임 끝 설정
   // 경고가 뜨면 더 이상 게임이 실행되지 않아야 함.
-  // 볼 좌표 + 20이 패들보다 크면 끝
-  if(ballY + 10 > paddleY + 10) { 
+  // 볼 좌표 + 반지름이 패들보다 크면 끝
+  if(ballY + ballRadius > paddleY + ballRadius) { 
     gameOver = true;
   }
 
@@ -128,19 +133,24 @@ function ballCollision() {
           bricksX = blockStartX * (j + 1);
           bricksY = blockStartY * (i + 1) - (20 * i);
         }
-       
-        console.log(bricksX);
 
         // 볼 좌표 + 반지름
         // 각각의 좌표를 구해서 충돌 체크
-        // 볼 좌표가 50이상 100이하
-        if(
-          bricksX <= ballX + ballRadius && bricksX + bricksWidth >= ballX + ballRadius &&
-          ballY + ballRadius > bricksY && ballY - ballRadius < bricksY + bricksHeight
-        ) {
+        // 볼 x좌표가 50 보다 크고 100 작고
+        // 볼 y좌표가 20보다 크고 40보다 작아야함
+        // 결과로 저 블럭 한개 좌표마다 충돌체크 해서 방향 전환 후 배열 값 0으로 변환
+        if (
+          ballX + ballRadius >= bricksX && ballX - ballRadius <= bricksX + bricksWidth &&
+          ballY + ballRadius >= bricksY && ballY - ballRadius <= bricksY + bricksHeight)
+        {
+          by = -by;
           mapBricks[i][j] = 0;
+          count++; 
+          if(count == mapBricks.length * mapBricks[i].length) {
+            gameOver = true;
+          }
+
         }
-          
       }
     }
   }
@@ -241,6 +251,7 @@ function draw() {
     location.reload();
     return;
   }
+
 
   // 내가 하고싶은 것
   // 벽돌의 x , y 좌표를 이중포문을 돌려 좌표를 따온 후
