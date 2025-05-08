@@ -16,6 +16,9 @@ const paddleHeight = 15;
 let ballX = canvasWidth; // 300
 let ballY = 410;
 
+/* 볼 반지름 */
+let ballRadius = 10;
+
 /* 벽돌 시작 좌표 */
 let blockStartX = 50;
 let blockStartY = 40;
@@ -30,7 +33,7 @@ const mapBricks = Array.from({ length: 4 }, () => Array(10).fill(1));
 /* 볼 그리기 */
 function ballDraw() {
    ctx.beginPath();
-   ctx.arc(ballX, ballY, 10, 0, Math.PI * 2);
+   ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
    ctx.fillStyle = "#404237";
    ctx.fill();
    ctx.closePath();
@@ -50,7 +53,8 @@ let gameOver = false; // 게임 끝
 let startGame = false; // 게임 시작
 
 
-function ballCollsion() {
+
+function ballCollision() {
   // 현재 오류
   // 너비보다 작으면 +를 하고
   // 너비랑 같아지면 -를 한다
@@ -59,22 +63,22 @@ function ballCollsion() {
   // 520이 되면 멈춤
   // 518이되면 다시 +2 무한 루프
 
-  // 볼 좌표 + 2이 캔버스 우측벽 - 지름 보다 크면 -로 변경
-  // 볼 좌표 + 2이 캔버스 좌측벽 지름 보다 작으면 -로 변경
+  // 볼 좌표 + 반지름이 캔버스 우측벽 - 지름 보다 크면 -로 변경
+  // 볼 좌표 + 반지름이 캔버스 좌측벽 지름 보다 작으면 -로 변경
 
   // 볼좌표가 캔바스 우측 590보다 크면 안됨
   // 10보다 작으면 안됨
 
   // 크면 마이너스
   // 10보다 작으면 +
-  if (ballX + bx > canvas.width - 10 || ballX + bx < 10) {
+  if (ballX + ballRadius > canvas.width || ballX - ballRadius < 0) {
     bx = -bx;
   }
 
   // 볼 x이동
   ballX += bx;
 
-  if (ballY + by > canvas.height - 10 || ballY + by < 10) {
+  if (ballY + ballRadius > canvas.height || ballY - ballRadius < 0) {
     by = -by;
   }
 
@@ -93,7 +97,7 @@ function ballCollsion() {
     // 볼 좌표 303이 패들 255보다 작고 303이 패들 300보다 크면
     // 볼이 --여서 양수로 바뀜 안바뀌게
     if(ballX + bx < paddleX) {
-      bx = -Math.abs(bx); 
+      bx = -Math.abs(bx);
     }else {
       bx = Math.abs(bx);
     }
@@ -111,12 +115,35 @@ function ballCollsion() {
   /* 벽돌 충돌 */
   // 벽돌의 좌표를 구한다 포문 ??
   // 볼의 좌표를 구한다.
-  // for(let i = 0; i < mapBricks.length; i++) {
-  //   for(let i = 0; i < mapBricks[i].length; j++) {
-      
-  //   }
-  // }
+  // 벽돌 사이즈 50 * 20
+  for(let i = 0; i < mapBricks.length; i++) {
+    for(let j = 0; j < mapBricks[i].length; j++) {
+      if(mapBricks[i][j] == 1) {
+        let bricksX = 0;
+        let bricksY = 0;
+        if(i == 0) {
+          bricksX = blockStartX * (j + 1);
+          bricksY = blockStartY * (i + 1);
+        }else {
+          bricksX = blockStartX * (j + 1);
+          bricksY = blockStartY * (i + 1) - (20 * i);
+        }
+       
+        console.log(bricksX);
 
+        // 볼 좌표 + 반지름
+        // 각각의 좌표를 구해서 충돌 체크
+        // 볼 좌표가 50이상 100이하
+        if(
+          bricksX <= ballX + ballRadius && bricksX + bricksWidth >= ballX + ballRadius &&
+          ballY + ballRadius > bricksY && ballY - ballRadius < bricksY + bricksHeight
+        ) {
+          mapBricks[i][j] = 0;
+        }
+          
+      }
+    }
+  }
 }
 
 let keyResult = 0; 
@@ -153,8 +180,8 @@ document.addEventListener('keyup', (e) => {
   }
 });
 
-// 패들 충돌
-function paddleCollison() {
+/* 패들 충돌 */
+function paddleCollision() {
   if (keyResult == 1) {
     if(paddleX < canvas.width - (paddleWidth / 2)) { // 패들 x 좌표가 캔바스 벽 - 45 보다 작으면 +
       paddleX += 5;
@@ -173,6 +200,7 @@ function paddleCollison() {
   }
 }
 
+
 /* 그리기 */
 function draw() {
 
@@ -185,7 +213,7 @@ function draw() {
   // 내가 원하는것 알림 확인을 누르면 다시 초기로돌아가 다시 시작
 
   // 패들 충돌검사
-  paddleCollison();
+  paddleCollision();
   // 패들 그리기
   paddleDraw();
   
@@ -200,7 +228,7 @@ function draw() {
       by = -3;
     }
   }else {
-    ballCollsion(); 
+    ballCollision(); 
   }
 
   // 볼 그리기
@@ -214,14 +242,19 @@ function draw() {
     return;
   }
 
+  // 내가 하고싶은 것
+  // 벽돌의 x , y 좌표를 이중포문을 돌려 좌표를 따온 후
+  // 충돌 검사 할건데 따오려면 어떻게 해야할까...
+
+
   /* 벽돌 그리기 */
-  for(let i = 0; i < 4; i++) {
-    for(let j = 0; j < 10; j++) {
+  for(let i = 0; i < mapBricks.length; i++) {
+    for(let j = 0; j < mapBricks[i].length; j++) {
       if(mapBricks[i][j] == 1) {
         if(i == 0) {
           ctx.fillStyle = "#E6E6E6";
           ctx.fillRect(blockStartX * (j + 1), blockStartY * (i + 1), bricksWidth, bricksHeight); 
-          ctx.strokeStyle = "#3s33";
+          ctx.strokeStyle = "#333";
           ctx.strokeRect(blockStartX * (j + 1), blockStartY * (i + 1), bricksWidth, bricksHeight);
         }else {
           ctx.fillStyle = "#E6E6E6";
@@ -236,6 +269,7 @@ function draw() {
   // 재귀함수
   requestAnimationFrame(draw);
 }
+
 
 draw();
 
