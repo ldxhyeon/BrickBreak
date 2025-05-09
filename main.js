@@ -91,12 +91,11 @@ function ballCollision() {
   // 볼의 x좌표가 패들 x좌표 +-45일때 닿으면 튕겨져 나가게
   // 볼X좌표 + 반지름이 패들X - 45 보다 크고 패들좌표 + 45보다 작야아함
   // 볼Y좌표(420) + paddleY보다 커야함
-  if(ballX + ballRadius > paddleX - paddleWidth / 2 && ballX + ballRadius < paddleX + paddleWidth / 2 &&
-     ballY + ballRadius > paddleY) {
+
+  // 310이 패들 255 보다 크고 290이 345보다 작다
+  if(ballX + ballRadius > paddleX - paddleWidth / 2 && ballX - ballRadius < paddleX + paddleWidth / 2 &&
+      ballY + ballRadius >= paddleY) {
       by = -by;
-
-  
-
       // 볼이 패들 좌측에 닿으면 x좌표는 -
       // 볼이 패들 우측에 닿으면 x좌표는 +
       // 볼 좌표가 300보다 작으면 -
@@ -114,6 +113,7 @@ function ballCollision() {
   // 경고가 뜨면 더 이상 게임이 실행되지 않아야 함.
   // 볼 좌표 + 반지름이 패들보다 크면 끝
   if(ballY + ballRadius > paddleY + ballRadius) { 
+    console.log(ballY + ballRadius);
     gameOver = true;
   }
 
@@ -124,33 +124,46 @@ function ballCollision() {
   for(let i = 0; i < mapBricks.length; i++) {
     for(let j = 0; j < mapBricks[i].length; j++) {
       if(mapBricks[i][j] == 1) {
+
         let bricksX = 0;
         let bricksY = 0;
+
         if(i == 0) {
           bricksX = blockStartX * (j + 1);
           bricksY = blockStartY * (i + 1);
         }else {
           bricksX = blockStartX * (j + 1);
           bricksY = blockStartY * (i + 1) - (20 * i);
+
         }
 
-        // 볼 좌표 + 반지름
         // 각각의 좌표를 구해서 충돌 체크
         // 볼 x좌표가 50 보다 크고 100 작고
         // 볼 y좌표가 20보다 크고 40보다 작아야함
         // 결과로 저 블럭 한개 좌표마다 충돌체크 해서 방향 전환 후 배열 값 0으로 변환
-        if (
-          ballX + ballRadius >= bricksX && ballX - ballRadius <= bricksX + bricksWidth &&
+        if(
+          ballX + ballRadius >= bricksX && ballX - ballRadius <= bricksX + bricksWidth
+          &&
           ballY + ballRadius >= bricksY && ballY - ballRadius <= bricksY + bricksHeight)
-        {
+        { 
+          // 볼의 4개 방향이 블럭 Y + heigth에 닿으면
+          // if(ballX + ballRadius < bricksY || ballY + ballRadius ||
+          //    ballX - ballRadius || ballY - ballRadius) {
+
+          // }
+
           by = -by;
+
+          // 부딪히면 0으로 값 변환 1이여야 그림이 그려지니까
           mapBricks[i][j] = 0;
           count++; 
           if(count == mapBricks.length * mapBricks[i].length) {
             gameOver = true;
           }
 
+          return;
         }
+
       }
     }
   }
